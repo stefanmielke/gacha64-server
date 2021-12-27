@@ -2,12 +2,27 @@
 #include <string>
 #include <enet/enet.h>
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: gacha64server {port_number}\n");
+        return -1;
+    }
+
+    std::string portString(argv[1]);
+
+    int port;
+    try {
+        port = std::stoi(portString);
+    } catch (const std::exception &ex) {
+        printf("Invalid port: %s", portString.c_str());
+        return -2;
+    }
+
     ENetAddress address;
     ENetHost *server;
 
     address.host = ENET_HOST_ANY;
-    address.port = 12345;
+    address.port = port;
 
     server = enet_host_create(&address, 3, 2, 0, 0);
     if (!server) {
@@ -15,7 +30,7 @@ int main() {
         return -1;
     }
 
-    printf("Listening on port 1234");
+    printf("Listening on port %d", port);
     fflush(stdout);
 
     ENetEvent event;
